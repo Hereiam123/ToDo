@@ -71,9 +71,8 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
             
             newItem.title = addItemTextField.text!
             newItem.done = false
-            
+
             self.itemArray.append(newItem)
-            
             self.saveItems()
             
             self.tableView.reloadData()
@@ -109,6 +108,13 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         loadItems(with: request)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if(searchBar.text?.count == 0){
+            loadItems()
+            searchBar.resignFirstResponder()
+        }
     }
 }
 
