@@ -68,32 +68,26 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             //What happens when user clicks add item button on UI alert
-            
-            let newItem = Item()
-            
-            newItem.title = addItemTextField.text!
-            newItem.done = false
-
-            self.saveItems(item: newItem)
+            if let currentCategory = self.selectedCategory{
+                do{
+                    try self.realm.write{
+                        let newItem = Item()
+                        newItem.title = addItemTextField.text!
+                        newItem.done = false
+                        currentCategory.items.append(newItem)
+                    }
+                }
+                catch{
+                    print("Error saving item array in context \(error)")
+                }
+            }
             
             self.tableView.reloadData()
         }
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
-    
-    //Mark - Model Save Items
-    func saveItems(item: Item){
-        do{
-            try realm.write{
-                realm.add(item)
-            }
-        }
-        catch{
-            print("Error saving item array in context \(error)")
-        }
-    }
-    
+
     //Mark - Load Items
     func loadItems(){
         itemList = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
@@ -101,20 +95,20 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     }
     
     //Mark - Search Bar
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        loadItems(with: request, predicate: predicate)
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if(searchBar.text?.count == 0){
-            loadItems()
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
-        }
-    }
+//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        let request : NSFetchRequest<Item> = Item.fetchRequest()
+//        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//        loadItems(with: request, predicate: predicate)
+//    }
+//    
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        if(searchBar.text?.count == 0){
+//            loadItems()
+//            DispatchQueue.main.async {
+//                searchBar.resignFirstResponder()
+//            }
+//        }
+//    }
 }
 
