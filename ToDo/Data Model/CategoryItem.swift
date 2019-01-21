@@ -1,5 +1,5 @@
 //
-//  Data.swift
+//  CategoryItem.swift
 //  ToDo
 //
 //  Created by Brian De Maio on 1/21/19.
@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-class Data: Object{
-    @objc dynamic var title: String = ""
-    @objc dynamic var done: Bool = false
+class CategoryItem: Object{
+    @objc dynamic var name: String = ""
+    let item = List<Item>()
 }
