@@ -7,16 +7,19 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
 
     var itemArray = [Item]()
     
-   let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadItems()
+        //loadItems()
     }
     
     //Mark - Create Table View
@@ -61,8 +64,12 @@ class TodoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             //What happens when user clicks add item button on UI alert
-            let newItem = Item()
+            
+            let newItem = Item(context: self.context)
+            
             newItem.title = addItemTextField.text!
+            newItem.done = false
+            
             self.itemArray.append(newItem)
             
             self.saveItems()
@@ -75,20 +82,16 @@ class TodoListViewController: UITableViewController {
     
     //Mark - Model Save Items
     func saveItems(){
-        
-        let encoder = PropertyListEncoder()
-        
         do{
-            let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!)
+          try context.save()
         }
         catch{
-            print("Error encoding item array \(error)")
+            print("Error saving item array in context \(error)")
         }
     }
     
     //Mark - Load Items
-    func loadItems(){
+    /*func loadItems(){
         if let data = try? Data(contentsOf: dataFilePath!){
             let decoder = PropertyListDecoder()
             do{
@@ -98,6 +101,6 @@ class TodoListViewController: UITableViewController {
                 print("Error decoding \(error)")
             }
         }
-    }
+    }*/
 }
 
