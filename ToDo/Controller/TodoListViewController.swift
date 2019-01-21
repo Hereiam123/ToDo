@@ -39,7 +39,8 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     //Mark - TableView Cell Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
         //context.delete(itemArray[indexPath.row])
         //itemArray.remove(at: indexPath.row)
@@ -113,7 +114,9 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if(searchBar.text?.count == 0){
             loadItems()
-            searchBar.resignFirstResponder()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
         }
     }
 }
