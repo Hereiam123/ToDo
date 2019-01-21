@@ -13,12 +13,13 @@ class TodoListViewController: UITableViewController {
 
     var itemArray = [Item]()
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last
+        print(dataFilePath!)
         //loadItems()
     }
     
@@ -91,16 +92,10 @@ class TodoListViewController: UITableViewController {
     }
     
     //Mark - Load Items
-    /*func loadItems(){
-        if let data = try? Data(contentsOf: dataFilePath!){
-            let decoder = PropertyListDecoder()
-            do{
-                itemArray = try decoder.decode([Item].self, from: data)
-            }
-            catch{
-                print("Error decoding \(error)")
-            }
-        }
-    }*/
+    func loadItems(){
+        let request : NSFetchRequest<Item>
+        
+        
+    }
 }
 
