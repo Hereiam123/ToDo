@@ -7,14 +7,14 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
     
-    var categoryArray = [CategoryItem]()
+    let realm = try! Realm()
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
+    var categoryArray: Results<CategoryItem>!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,9 +23,11 @@ class CategoryViewController: UITableViewController {
     }
 
     //Mark - Save Categories
-    func saveCategories(){
+    func saveCategories(category: CategoryItem){
         do{
-            try context.save()
+            try realm.write{
+                realm.add(category)
+            }
         }
         catch{
             print("Error saving item array in context \(error)")
@@ -33,13 +35,8 @@ class CategoryViewController: UITableViewController {
     }
     
     //Mark - Load Categories
-    func loadCategories(with request: NSFetchRequest<CategoryItem> = CategoryItem.fetchRequest()){
-        do{
-            categoryArray = try context.fetch(request)
-        }
-        catch{
-            print("Error getting category request in context \(error)")
-        }
+    func loadCategories(){
+        categoryArray = realm.objects(CategoryItem.self)
         tableView.reloadData()
     }
     
@@ -56,12 +53,11 @@ class CategoryViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
             //What happens when user clicks add category button on UI alert
-            let newCategory = CategoryItem(context: self.context)
+            let newCategory = CategoryItem()
             
             newCategory.name = addItemTextField.text!
             
-            self.categoryArray.append(newCategory)
-            self.saveCategories()
+            self.saveCategories(category: newCategory)
             
             self.tableView.reloadData()
         }
