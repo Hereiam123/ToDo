@@ -7,11 +7,13 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class TodoListViewController: UITableViewController, UISearchBarDelegate {
 
-    var itemArray = [Item]()
+    let realm = try! Realm()
+    
+    var itemList : Results<Item>?
     
     var selectedCategory : CategoryItem? {
         didSet{
@@ -19,39 +21,34 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         }
     }
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     //Mark - Create Table View
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return itemList?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for:indexPath)
-        let item = itemArray[indexPath.row]
-        
-        cell.textLabel?.text = item.title
-        
-        cell.accessoryType = item.done ? .checkmark : .none
-        
+        if let item = itemList?[indexPath.row] {
+            cell.textLabel?.text = item.title
+            cell.accessoryType = item.done ? .checkmark : .none
+        }else{
+            cell.textLabel?.text = "No Items Added Yet"
+        }
         return cell
     }
     
     //Mark - TableView Cell Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        
-        //context.delete(itemArray[indexPath.row])
-        //itemArray.remove(at: indexPath.row)
-        
-        saveItems()
-        
-        tableView.reloadData()
+//        itemList[indexPath.row].done = !itemList[indexPath.row].done
+//
+//        saveItems()
+//
+//        tableView.reloadData()
         
         tableView.deselectRow(at: indexPath, animated: true)
         
@@ -72,14 +69,12 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             //What happens when user clicks add item button on UI alert
             
-            let newItem = Item(context: self.context)
+            let newItem = Item()
             
             newItem.title = addItemTextField.text!
             newItem.done = false
-            newItem.parentCategory = self.selectedCategory
 
-            self.itemArray.append(newItem)
-            self.saveItems()
+            self.saveItems(item: newItem)
             
             self.tableView.reloadData()
         }
@@ -88,9 +83,11 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     }
     
     //Mark - Model Save Items
-    func saveItems(){
+    func saveItems(item: Item){
         do{
-          try context.save()
+            try realm.write{
+                realm.add(item)
+            }
         }
         catch{
             print("Error saving item array in context \(error)")
@@ -98,23 +95,8 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     }
     
     //Mark - Load Items
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
-        
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-        
-        if let additionalPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate,additionalPredicate])
-        }
-        else{
-            request.predicate = categoryPredicate
-        }
-        
-        do{
-            itemArray = try context.fetch(request)
-        }
-        catch{
-            print("Error getting item request in context \(error)")
-        }
+    func loadItems(){
+        itemList = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
     }
     
