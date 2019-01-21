@@ -13,7 +13,7 @@ class CategoryViewController: UITableViewController {
     
     let realm = try! Realm()
     
-    var categoryArray: Results<CategoryItem>!
+    var categoryArray: Results<CategoryItem>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,16 +67,14 @@ class CategoryViewController: UITableViewController {
     
     //Mark - TableView Cell Row Count
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryArray.count
+        return categoryArray?.count ?? 1
     }
     
     //Mark - TableView Cell Delegate
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for:indexPath)
-        let item = categoryArray[indexPath.row]
-        
-        cell.textLabel?.text = item.name
-        
+        cell.textLabel?.text = categoryArray?[indexPath.row].name ?? "No Categories Added Yet"
+
         return cell
     }
     
@@ -89,7 +87,7 @@ class CategoryViewController: UITableViewController {
         let destinationVC = segue.destination as! TodoListViewController
         
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categoryArray[indexPath.row]
+            destinationVC.selectedCategory = categoryArray?[indexPath.row]
         }
     }
 }
