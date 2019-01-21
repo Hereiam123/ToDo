@@ -20,7 +20,7 @@ class TodoListViewController: UITableViewController {
         super.viewDidLoad()
         let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last
         print(dataFilePath!)
-        //loadItems()
+        loadItems()
     }
     
     //Mark - Create Table View
@@ -93,8 +93,14 @@ class TodoListViewController: UITableViewController {
     
     //Mark - Load Items
     func loadItems(){
-        let request : NSFetchRequest<Item>
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
         
+        do{
+            itemArray = try context.fetch(request)
+        }
+        catch{
+            print("Error getting item request in context \(error)")
+        }
         
     }
 }
