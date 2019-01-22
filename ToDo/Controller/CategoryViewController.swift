@@ -21,6 +21,8 @@ class CategoryViewController: UITableViewController, SwipeTableViewCellDelegate 
         
         //Load categories on start
         loadCategories()
+        
+        tableView.rowHeight = 100
     }
 
     //Mark - Save Categories
@@ -79,18 +81,34 @@ class CategoryViewController: UITableViewController, SwipeTableViewCellDelegate 
         return cell
     }
     
-    //Mark - Swipe Cell Delegate Method
+    //Mark - Swipe Cell Delegate Methods
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
         
         let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
             // handle action by updating model with deletion
+            if let categoriesForDeletion = self.categoryItems?[indexPath.row]{
+                do{
+                    try self.realm.write {
+                        self.realm.delete(categoriesForDeletion)
+                    }
+                }
+                catch{
+                    print("Error deleteing category item: \(error)")
+                }
+            }
         }
         
         // customize the action appearance
         deleteAction.image = UIImage(named: "delete")
         
         return [deleteAction]
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.expansionStyle = .destructive
+        return options
     }
     
     //Mark - TableView Category Selected
