@@ -41,6 +41,13 @@ class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
             searchBar.barTintColor = navBarColor
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        guard let originalNavColor = UIColor(hexString: "1D9BF6") else {fatalError()}
+        navigationController?.navigationBar.barTintColor = originalNavColor
+        navigationController?.navigationBar.tintColor = FlatWhite()
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : FlatWhite()]
+    }
+    
     //Mark - Create Table View
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemList?.count ?? 1
