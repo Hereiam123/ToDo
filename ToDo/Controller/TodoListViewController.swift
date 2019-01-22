@@ -26,6 +26,13 @@ class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
         super.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        if let colorHex = selectedCategory?.backgroundColor {
+            guard let navbar = navigationController?.navigationBar else {fatalError("Nav Controller not here!")}
+            navbar.barTintColor = UIColor(hexString: colorHex)
+        }
+    }
+    
     //Mark - Create Table View
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemList?.count ?? 1
