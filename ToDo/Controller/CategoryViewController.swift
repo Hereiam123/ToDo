@@ -20,8 +20,6 @@ class CategoryViewController: SwipeTableViewController{
         
         //Load categories on start
         loadCategories()
-        
-        tableView.rowHeight = 100
     }
 
     //Mark - Save Categories
