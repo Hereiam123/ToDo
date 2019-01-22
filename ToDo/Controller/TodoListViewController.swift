@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController, UISearchBarDelegate {
+class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
 
     let realm = try! Realm()
     
@@ -32,7 +32,7 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     //Mark - Table Row Setup
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for:indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = itemList?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.done ? .checkmark : .none
@@ -44,7 +44,6 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     //Mark - TableView Cell Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         if let item = itemList?[indexPath.row]{
             do{
                 try realm.write{
@@ -100,6 +99,20 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     func loadItems(){
         itemList = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
+    }
+    
+    //Mark - Delete Item on Swipe
+    override func updateModel(at indexPath: IndexPath) {
+        if let itemToDelete = self.itemList?[indexPath.row]{
+            do{
+                try self.realm.write {
+                    self.realm.delete(itemToDelete)
+                }
+            }
+            catch{
+                print("Error deleteing ToDo item: \(error)")
+            }
+        }
     }
     
     //Mark - Search Bar

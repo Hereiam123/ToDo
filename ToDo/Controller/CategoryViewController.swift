@@ -8,9 +8,8 @@
 
 import UIKit
 import RealmSwift
-import SwipeCellKit
 
-class CategoryViewController: UITableViewController, SwipeTableViewCellDelegate {
+class CategoryViewController: SwipeTableViewController{
     
     let realm = try! Realm()
     
@@ -41,6 +40,20 @@ class CategoryViewController: UITableViewController, SwipeTableViewCellDelegate 
     func loadCategories(){
         categoryItems = realm.objects(CategoryItem.self)
         tableView.reloadData()
+    }
+    
+    //Mark - Delete Data at Swipe
+    override func updateModel(at indexPath: IndexPath) {
+        if let categoriesForDeletion = self.categoryItems?[indexPath.row]{
+            do{
+                try self.realm.write {
+                    self.realm.delete(categoriesForDeletion)
+                }
+            }
+            catch{
+                print("Error deleteing category item: \(error)")
+            }
+        }
     }
     
     //Mark - Add New Categories
@@ -75,40 +88,9 @@ class CategoryViewController: UITableViewController, SwipeTableViewCellDelegate 
     
     //Mark - TableView Cell Delegate
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for:indexPath) as! SwipeTableViewCell
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = categoryItems?[indexPath.row].name ?? "No Categories Added Yet"
-        cell.delegate = self
         return cell
-    }
-    
-    //Mark - Swipe Cell Delegate Methods
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        guard orientation == .right else { return nil }
-        
-        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-            // handle action by updating model with deletion
-            if let categoriesForDeletion = self.categoryItems?[indexPath.row]{
-                do{
-                    try self.realm.write {
-                        self.realm.delete(categoriesForDeletion)
-                    }
-                }
-                catch{
-                    print("Error deleteing category item: \(error)")
-                }
-            }
-        }
-        
-        // customize the action appearance
-        deleteAction.image = UIImage(named: "delete")
-        
-        return [deleteAction]
-    }
-    
-    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
-        var options = SwipeOptions()
-        options.expansionStyle = .destructive
-        return options
     }
     
     //Mark - TableView Category Selected
@@ -116,6 +98,7 @@ class CategoryViewController: UITableViewController, SwipeTableViewCellDelegate 
         performSegue(withIdentifier: "goToItems", sender: self)
     }
     
+    //Mark - Segue to List of Items Added To Category
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! TodoListViewController
         
