@@ -23,6 +23,8 @@ class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.rowHeight = 100
     }
     
     //Mark - Create Table View
