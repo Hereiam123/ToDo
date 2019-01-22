@@ -37,11 +37,12 @@ class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
         if let item = itemList?[indexPath.row] {
             cell.textLabel?.text = item.title
             
-            if let color = FlatSkyBlue().darken(byPercentage:
+            if let color = UIColor(hexString: selectedCategory!.backgroundColor)?.darken(byPercentage:
                 //Darken each background color based on index path
                 CGFloat(indexPath.row) / CGFloat(itemList!.count)
                 ){
                 cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
             }
             
             cell.accessoryType = item.done ? .checkmark : .none
