@@ -30,6 +30,7 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         return itemList?.count ?? 1
     }
     
+    //Mark - Table Row Setup
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for:indexPath)
         if let item = itemList?[indexPath.row] {
@@ -44,14 +45,20 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     //Mark - TableView Cell Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-//        itemList[indexPath.row].done = !itemList[indexPath.row].done
-//
-//        saveItems()
-//
-//        tableView.reloadData()
+        if let item = itemList?[indexPath.row]{
+            do{
+                try realm.write{
+                    item.done = !item.done
+                }
+            }
+            catch{
+                print("Realm item select write error: \(error)")
+            }
+        }
+        
+        tableView.reloadData()
         
         tableView.deselectRow(at: indexPath, animated: true)
-        
     }
     
     //Mark - Add new items
