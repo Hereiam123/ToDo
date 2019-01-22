@@ -15,6 +15,8 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
         super.viewDidLoad()
 
         tableView.rowHeight = 100
+        
+        tableView.separatorStyle = .none
     }
     
     //Mark - Table View Datasource Method
