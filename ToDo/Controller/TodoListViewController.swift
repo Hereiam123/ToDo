@@ -30,22 +30,23 @@ class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         guard let colorHex = selectedCategory?.backgroundColor else { fatalError() }
-        
-            title = selectedCategory!.name
-            guard let navbar = navigationController?.navigationBar else {fatalError("Nav Controller not here!")}
-            
-            guard let navBarColor = UIColor(hexString: colorHex) else {fatalError()}
-            navbar.barTintColor = navBarColor
-            navbar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
-            navbar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBarColor, returnFlat: true)]
-            searchBar.barTintColor = navBarColor
+        updateNavbar(withHexCode: colorHex)
+        title = selectedCategory!.name
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        guard let originalNavColor = UIColor(hexString: "1D9BF6") else {fatalError()}
-        navigationController?.navigationBar.barTintColor = originalNavColor
-        navigationController?.navigationBar.tintColor = FlatWhite()
-        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : FlatWhite()]
+        updateNavbar(withHexCode: "1D9BF6")
+    }
+    
+    //Mark - Navbar Setup Methods
+    func updateNavbar(withHexCode hexCode: String){
+        guard let navbar = navigationController?.navigationBar else {fatalError("Nav Controller not here!")}
+        guard let navBarColor = UIColor(hexString: hexCode) else {fatalError()}
+        navbar.barTintColor = navBarColor
+        navbar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+        navbar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBarColor, returnFlat: true)]
+        searchBar.barTintColor = navBarColor
+    
     }
     
     //Mark - Create Table View
