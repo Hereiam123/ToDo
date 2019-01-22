@@ -14,6 +14,8 @@ class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
 
     let realm = try! Realm()
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     var itemList : Results<Item>?
     
     var selectedCategory : CategoryItem? {
@@ -27,10 +29,16 @@ class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if let colorHex = selectedCategory?.backgroundColor {
+        guard let colorHex = selectedCategory?.backgroundColor else { fatalError() }
+        
+            title = selectedCategory!.name
             guard let navbar = navigationController?.navigationBar else {fatalError("Nav Controller not here!")}
-            navbar.barTintColor = UIColor(hexString: colorHex)
-        }
+            
+            guard let navBarColor = UIColor(hexString: colorHex) else {fatalError()}
+            navbar.barTintColor = navBarColor
+            navbar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+            navbar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBarColor, returnFlat: true)]
+            searchBar.barTintColor = navBarColor
     }
     
     //Mark - Create Table View

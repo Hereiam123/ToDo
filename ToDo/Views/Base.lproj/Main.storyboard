@@ -80,12 +80,14 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Items" id="VeR-xW-B5n">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="mcj-hF-8Eh">
-                            <color key="tintColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="Pe2-1i-s2w" id="5ly-Bg-PkB"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="searchBar" destination="COH-pF-rH4" id="CL7-I4-wBx"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="e30-W6-vKQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
