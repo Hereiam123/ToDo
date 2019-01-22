@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
 
@@ -35,6 +36,14 @@ class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = itemList?[indexPath.row] {
             cell.textLabel?.text = item.title
+            
+            if let color = FlatSkyBlue().darken(byPercentage:
+                //Darken each background color based on index path
+                CGFloat(indexPath.row / itemList!.count)
+                ){
+                cell.backgroundColor = color
+            }
+            
             cell.accessoryType = item.done ? .checkmark : .none
         }else{
             cell.textLabel?.text = "No Items Added Yet"
