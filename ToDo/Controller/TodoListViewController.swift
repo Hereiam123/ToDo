@@ -39,7 +39,7 @@ class TodoListViewController: SwipeTableViewController, UISearchBarDelegate {
             
             if let color = FlatSkyBlue().darken(byPercentage:
                 //Darken each background color based on index path
-                CGFloat(indexPath.row / itemList!.count)
+                CGFloat(indexPath.row) / CGFloat(itemList!.count)
                 ){
                 cell.backgroundColor = color
             }
